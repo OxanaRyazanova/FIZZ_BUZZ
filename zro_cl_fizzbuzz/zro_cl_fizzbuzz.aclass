@@ -1,0 +1,21 @@
+CLASS zro_cl_fizzbuzz DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+    METHODS convert_number
+      IMPORTING
+        number        TYPE int1
+      RETURNING
+        VALUE(result) TYPE string.
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS zro_cl_fizzbuzz IMPLEMENTATION.
+  METHOD convert_number.
+    result = condense( CONV string( 1 ) ).
+  ENDMETHOD.
+
+ENDCLASS.
