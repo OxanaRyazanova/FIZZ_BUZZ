@@ -4,34 +4,40 @@ CLASS zro_cl_fizzbuzz DEFINITION
   CREATE PUBLIC .
 
   PUBLIC SECTION.
-    METHODS convert_number IMPORTING number        TYPE int1
-                           RETURNING VALUE(result) TYPE string.
+    TYPES:BEGIN OF ts_converted_number,
+            number           TYPE int1,
+            converted_number TYPE string,
+          END OF ts_converted_number,
+          tt_converted_number TYPE STANDARD TABLE OF ts_converted_number WITH DEFAULT KEY.
+
+    METHODS convert IMPORTING number        TYPE int1
+                    RETURNING VALUE(result) TYPE tt_converted_number.
+
   PROTECTED SECTION.
+
   PRIVATE SECTION.
     CONSTANTS: fizz TYPE string VALUE 'Fizz',
                buzz TYPE string VALUE 'Buzz'.
-    METHODS: is_num_dividable_by_3 IMPORTING number        TYPE int1
-                                   RETURNING VALUE(result) TYPE abap_boolean,
-             is_num_dividable_by_5 IMPORTING number        TYPE int1
-                                   RETURNING VALUE(result) TYPE abap_boolean.
+    METHODS: convert_number IMPORTING number        TYPE int1
+                            RETURNING VALUE(result) TYPE string,
+      is_num_dividable_by_3 IMPORTING number        TYPE int1
+                            RETURNING VALUE(result) TYPE abap_boolean,
+      is_num_dividable_by_5 IMPORTING number        TYPE int1
+                            RETURNING VALUE(result) TYPE abap_boolean.
 ENDCLASS.
 
 CLASS zro_cl_fizzbuzz IMPLEMENTATION.
+
+  METHOD convert.
+    DO number TIMES.
+      APPEND VALUE #( number = sy-index converted_number = convert_number( CONV #( sy-index ) ) ) TO result.
+    ENDDO.
+  ENDMETHOD.
+
   METHOD convert_number.
-*    IF number = 3.
-*      result = |{ fizz }|.
-*    ELSEIF number = 5.
-*      result = |{ buzz }|.
-*    ELSE.
-*      result = condense( CONV string( number ) ).
-*    ENDIF.
-*    result = COND #( WHEN number = 3 THEN |{ fizz }|
-*                     WHEN number = 5 THEN |{ buzz }|
-*                     ELSE condense( CONV string( number ) ) ).
-    result = COND #( WHEN is_num_dividable_by_3( number )
-                      and is_num_dividable_by_5( number ) THEN |{ fizz }{ buzz }|
-                     WHEN is_num_dividable_by_3( number ) THEN |{ fizz }|
-                     WHEN is_num_dividable_by_5( number ) THEN |{ buzz }|
+    result = COND #( WHEN is_num_dividable_by_3( number ) AND is_num_dividable_by_5( number ) THEN |{ fizz }{ buzz }|
+                     WHEN is_num_dividable_by_3( number )                                     THEN |{ fizz }|
+                     WHEN is_num_dividable_by_5( number )                                     THEN |{ buzz }|
                      ELSE condense( CONV string( number ) ) ).
   ENDMETHOD.
 
